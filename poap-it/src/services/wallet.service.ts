@@ -8,6 +8,7 @@ const DUNE_API_KEY = ''
 
 export function InitWallet() {
     let masterWallet = ethers.Wallet.createRandom();
+    console.log(masterWallet)
     localStorage.setItem('masterWallet', JSON.stringify(masterWallet));
 }
 
@@ -28,7 +29,7 @@ export async function createPOAP(poapHash: string) {
     let subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
 
     while (isNotEmptySubwallet) {
-        let subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
+        subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
         index++;
         // Execute Dune Query
         const duneExecutionsOptions = {
