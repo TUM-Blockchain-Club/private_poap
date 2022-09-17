@@ -1,4 +1,10 @@
 {
+
+  "scripts": {
+    "start": "npx tsc && node src/index.js"
+  },
+
+
   "devDependencies": {
     "typescript": "^4.8.3"
   }
