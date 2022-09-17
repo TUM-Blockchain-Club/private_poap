@@ -4,7 +4,7 @@ import {ethers} from 'ethers';
 const POAP_API_KEY = '';
 const POAP_API_TOKEN = '';
 const DUNE_API_QUERY_ID = '1279140'
-const DUNE_API_KEY = 'Vuv5kiq2l7yk8Oopu4O0FQrQKx7MmF6r'
+const DUNE_API_KEY = ''
 
 export function InitWallet() {
     let masterWallet = ethers.Wallet.createRandom();
