@@ -1,5 +1,5 @@
-import axios, {AxiosRequestConfig} from 'axios';
-import {ethers} from 'ethers';
+import axios, { AxiosRequestConfig } from 'axios';
+import { ethers } from 'ethers';
 
 const POAP_API_KEY = '';
 const POAP_API_TOKEN = '';
@@ -29,12 +29,13 @@ export async function createPOAP(poapHash: string) {
     let masterWallet: ethers.utils.HDNode = ethers.utils.HDNode.fromMnemonic(String(mnemonic_phrase));
     let index = 0;
     let subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
-    let i = 10;
-    while (i!=0) {
+    let i = 10
+    while (i != 0 && isNotEmptySubwallet) {
         i--;
         subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
         index++;
         // Execute Dune Query
+        console.log("url posted to:", 'https://api.dune.com/api/v1/query/' + DUNE_API_QUERY_ID + '/execute')
         const duneExecutionsOptions = {
             method: 'POST',
             url: 'https://api.dune.com/api/v1/query/' + DUNE_API_QUERY_ID + '/execute?Address=' + subWallet.address,
@@ -44,16 +45,22 @@ export async function createPOAP(poapHash: string) {
                 // 'Access-Control-Allow-Origin': '*',
                 // 'Access-Control-Allow-Credentials':true
                 // authorization: 'Bearer ' + POAP_API_TOKEN
+            },
+            data: {
+                "query_parameters": {
+                    "Address": subWallet.address
+                }
             }
-        };
 
+        };
+        console.log(subWallet.address)
         let executionID: string = '';
         await axios
             //@ts-ignore
             .request(duneExecutionsOptions)
             .then(function (respose) {
                 executionID = respose.data.execution_id;
-                console.log(respose);
+                console.log(executionID);
             })
             .catch(function (error) {
                 console.error(error);
@@ -70,6 +77,7 @@ export async function createPOAP(poapHash: string) {
                 // 'Access-Control-Allow-Origin': '*'
             }
         };
+        await new Promise(f => setTimeout(f, 5000));
 
         await axios
             //@ts-ignore
@@ -77,7 +85,10 @@ export async function createPOAP(poapHash: string) {
             .then(function (response) {
                 console.log(response.data)
                 let duneQueryResult = response.data;
-                if (duneQueryResult.result.rows.length === 0) isNotEmptySubwallet = false;
+                if (duneQueryResult.result) {
+                    if (duneQueryResult.result.rows.length === 0) isNotEmptySubwallet = false;
+                }
+
                 console.log(response);
             })
             .catch(function (error) {
@@ -85,14 +96,19 @@ export async function createPOAP(poapHash: string) {
             });
     }
 
+
+
     // Get POAP API Secret
+    
     const secretFetchOptions = {
         method: 'GET',
-        url: 'https://api.poap.tech/actions/claim-qr?qr_hash=' + poapHash,
+        url: 'https://api.dune.com/api/v1/execution/01GD6WJ47R4DSTD0C0BFBTB2P6/results',
         headers: {
-            accept: 'application/json',
+            // accept: 'application/json',
+            // 'Access-Control-Allow-Origin': "http://localhost:3000",
+            // 'Access-Control-Allow-Credentials': 'true',
+            // 'authorization': 'Bearer ' + POAP_API_TOKEN,
             'X-API-Key': POAP_API_KEY,
-            authorization: 'Bearer ' + POAP_API_TOKEN
         }
     };
 
@@ -114,10 +130,10 @@ export async function createPOAP(poapHash: string) {
         method: 'POST',
         url: 'https://api.poap.tech/actions/claim-qr',
         headers: {
-            accept: 'application/json',
-            'content-type': 'application/json',
+            // accept: 'application/json',
+            // 'content-type': 'application/json',
             'X-API-Key': 'b',
-            authorization: 'Bearer ' + POAP_API_TOKEN
+            'authorization': 'Bearer ' + POAP_API_TOKEN
         },
         data: {
             sendEmail: true,
