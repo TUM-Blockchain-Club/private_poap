@@ -3,6 +3,8 @@ import {ethers} from 'ethers';
 
 const POAP_API_KEY = '';
 const POAP_API_TOKEN = '';
+const DUNE_API_QUERY_ID = '1279140'
+const DUNE_API_KEY = ''
 
 export function InitWallet() {
     let masterWallet = ethers.Wallet.createRandom();
@@ -23,6 +25,24 @@ export async function createPOAP(poapHash: string) {
     let subWallet: ethers.utils.HDNode = ethers.utils.HDNode.fromMnemonic(masterWallet.mnemonic.phrase);
 
     // TODO: check if subWallet has any content or is empty => Dune API ?
+    const duneAPIOptions = {
+        method: 'GET',
+        url: 'https://api.dune.com/api/v1/query/'+ DUNE_API_QUERY_ID +'/execute?Address=' + subWallet.address,
+        headers: {
+            accept: 'application/json',
+            'x-dune-api-key': DUNE_API_KEY,
+            authorization: 'Bearer ' + POAP_API_TOKEN
+        }
+    };
+    await axios
+        .request(duneAPIOptions)
+        .then(function (respose) {
+            console.log(respose);
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+
 
     // Get POAP API Secret
     const secretFetchOptions = {
