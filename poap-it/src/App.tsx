@@ -1,7 +1,7 @@
-import {Button} from '@chakra-ui/react';
-import React from 'react';
+import { Button } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import './App.css';
-import {getMasterWallet} from "./services/wallet.service";
+import { getMasterWallet , createPOAP} from "./services/wallet.service";
 
 
 function App() {
@@ -12,6 +12,12 @@ function App() {
             }} colorScheme='teal' variant='outline'>
                 GOOOOOOO
             </Button>
+            <Button onClick={() => {
+                createPOAP("IZZWFV")
+            }} colorScheme='teal' variant='outline'>
+                get poap
+            </Button>
+
         </div>
     );
 }
