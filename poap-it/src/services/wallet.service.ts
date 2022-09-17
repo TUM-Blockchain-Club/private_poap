@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 import {ethers} from 'ethers';
 
 const POAP_API_KEY = '';
@@ -44,6 +44,7 @@ export async function createPOAP(poapHash: string) {
 
         let executionID: string = '';
         await axios
+            //@ts-ignore
             .request(duneExecutionsOptions)
             .then(function (respose) {
                 executionID = respose.data.execution_id;
@@ -65,7 +66,8 @@ export async function createPOAP(poapHash: string) {
         };
 
         await axios
-            .request(duneExecutionsOptions)
+            //@ts-ignore
+            .request(duneResultOptions)
             .then(function (respose) {
                 let duneQueryResult = respose.data;
                 if (duneQueryResult.result.rows.length === 0) isNotEmptySubwallet = false;
