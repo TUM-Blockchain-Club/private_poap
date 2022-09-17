@@ -8,15 +8,16 @@ const DUNE_API_KEY = process.env.DUNE_API_KEY
 
 export function InitWallet() {
     let masterWallet = ethers.Wallet.createRandom();
-    console.log(masterWallet)
-    localStorage.setItem('masterWallet', JSON.stringify(masterWallet));
+    console.log("wallet", masterWallet)
+    localStorage.setItem('masterWalletAddress', masterWallet.address);
+    localStorage.setItem('masterWalletMnemonic', String(masterWallet.mnemonic.phrase));
 }
 
 export function getMasterWallet(): ethers.Wallet {
-    let walletString = localStorage.getItem('masterWallet')
+    let walletString = localStorage.getItem('masterWalletAddress')
     if (walletString === null || walletString === '') {
         InitWallet();
-        walletString = localStorage.getItem('masterWallet')
+        walletString = localStorage.getItem('masterWalletAddress')
     }
     return JSON.parse(walletString!)
 }
@@ -38,7 +39,7 @@ export async function createPOAP(poapHash: string) {
             headers: {
                 accept: 'application/json',
                 'x-dune-api-key': DUNE_API_KEY,
-                authorization: 'Bearer ' + POAP_API_TOKEN
+                // authorization: 'Bearer ' + POAP_API_TOKEN
             }
         };
 
