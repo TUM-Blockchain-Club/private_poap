@@ -22,27 +22,56 @@ export function getMasterWallet(): ethers.Wallet {
 
 export async function createPOAP(poapHash: string) {
     const masterWallet = getMasterWallet();
+    let isNotEmptySubwallet = true;
     let subWallet: ethers.utils.HDNode = ethers.utils.HDNode.fromMnemonic(masterWallet.mnemonic.phrase);
 
-    // TODO: check if subWallet has any content or is empty => Dune API ?
-    const duneAPIOptions = {
-        method: 'GET',
-        url: 'https://api.dune.com/api/v1/query/'+ DUNE_API_QUERY_ID +'/execute?Address=' + subWallet.address,
-        headers: {
-            accept: 'application/json',
-            'x-dune-api-key': DUNE_API_KEY,
-            authorization: 'Bearer ' + POAP_API_TOKEN
-        }
-    };
-    await axios
-        .request(duneAPIOptions)
-        .then(function (respose) {
-            console.log(respose);
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
+    while (isNotEmptySubwallet) {
+        subWallet = ethers.utils.HDNode.fromMnemonic(masterWallet.mnemonic.phrase);
 
+        // Execute Dune Query
+        const duneExecutionsOptions = {
+            method: 'POST',
+            url: 'https://api.dune.com/api/v1/query/'+ DUNE_API_QUERY_ID +'/execute?Address=' + subWallet.address,
+            headers: {
+                accept: 'application/json',
+                'x-dune-api-key': DUNE_API_KEY,
+                authorization: 'Bearer ' + POAP_API_TOKEN
+            }
+        };
+
+        let executionID: string = '';
+        await axios
+            .request(duneExecutionsOptions)
+            .then(function (respose) {
+                executionID = respose.data.execution_id;
+                console.log(respose);
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Query Result
+        const duneResultOptions = {
+            method: 'GET',
+            url: 'https://api.dune.com/api/v1/execution/'+ executionID +'/results',
+            headers: {
+                accept: 'application/json',
+                'x-dune-api-key': DUNE_API_KEY,
+                authorization: 'Bearer ' + POAP_API_TOKEN
+            }
+        };
+
+        await axios
+            .request(duneExecutionsOptions)
+            .then(function (respose) {
+                let duneQueryResult = respose.data;
+                if (duneQueryResult.result.rows.length === 0) isNotEmptySubwallet = false;
+                console.log(respose);
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    }
 
     // Get POAP API Secret
     const secretFetchOptions = {
