@@ -4,7 +4,7 @@ import {ethers} from 'ethers';
 const POAP_API_KEY = '';
 const POAP_API_TOKEN = '';
 const DUNE_API_QUERY_ID = '1279140'
-const DUNE_API_KEY = ''
+const DUNE_API_KEY = 'Vuv5kiq2l7yk8Oopu4O0FQrQKx7MmF6r'
 
 export function InitWallet() {
     let masterWallet = ethers.Wallet.createRandom();
@@ -21,17 +21,19 @@ export function getMasterWallet(): ethers.Wallet {
 }
 
 export async function createPOAP(poapHash: string) {
-    const masterWallet = getMasterWallet();
+    const wallet = getMasterWallet();
     let isNotEmptySubwallet = true;
-    let subWallet: ethers.utils.HDNode = ethers.utils.HDNode.fromMnemonic(masterWallet.mnemonic.phrase);
+    let masterWallet: ethers.utils.HDNode = ethers.utils.HDNode.fromMnemonic(wallet.mnemonic.phrase);
+    let index = 0;
+    let subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
 
     while (isNotEmptySubwallet) {
-        subWallet = ethers.utils.HDNode.fromMnemonic(masterWallet.mnemonic.phrase);
-
+        let subWallet = masterWallet.derivePath(`m/44'/60'/${index}'/0/0`);
+        index++;
         // Execute Dune Query
         const duneExecutionsOptions = {
             method: 'POST',
-            url: 'https://api.dune.com/api/v1/query/'+ DUNE_API_QUERY_ID +'/execute?Address=' + subWallet.address,
+            url: 'https://api.dune.com/api/v1/query/' + DUNE_API_QUERY_ID + '/execute?Address=' + subWallet.address,
             headers: {
                 accept: 'application/json',
                 'x-dune-api-key': DUNE_API_KEY,
@@ -53,7 +55,7 @@ export async function createPOAP(poapHash: string) {
         // Query Result
         const duneResultOptions = {
             method: 'GET',
-            url: 'https://api.dune.com/api/v1/execution/'+ executionID +'/results',
+            url: 'https://api.dune.com/api/v1/execution/' + executionID + '/results',
             headers: {
                 accept: 'application/json',
                 'x-dune-api-key': DUNE_API_KEY,
@@ -74,7 +76,7 @@ export async function createPOAP(poapHash: string) {
     }
 
     // Get POAP API Secret
-    const secretFetchOptions = {
+    /*const secretFetchOptions = {
         method: 'GET',
         url: 'https://api.poap.tech/actions/claim-qr?qr_hash=' + poapHash,
         headers: {
@@ -125,5 +127,5 @@ export async function createPOAP(poapHash: string) {
         })
         .catch(function (error) {
             console.error(error);
-        });
+        });*/
 }
