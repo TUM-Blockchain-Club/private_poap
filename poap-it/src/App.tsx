@@ -13,7 +13,7 @@ function App() {
                 GOOOOOOO
             </Button>
             <Button onClick={() => {
-                createPOAP("1zzwfv")
+                createPOAP("rzajuw")
             }} colorScheme='teal' variant='outline'>
                 get poap
             </Button>

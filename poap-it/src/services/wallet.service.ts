@@ -99,59 +99,52 @@ export async function createPOAP(poapHash: string) {
 
 
     // Get POAP API Secret
-    
-    const secretFetchOptions = {
-        method: 'GET',
-        url: 'https://api.dune.com/api/v1/execution/01GD6WJ47R4DSTD0C0BFBTB2P6/results',
-        headers: {
-            // accept: 'application/json',
-            // 'Access-Control-Allow-Origin': "http://localhost:3000",
-            // 'Access-Control-Allow-Credentials': 'true',
-            // 'authorization': 'Bearer ' + POAP_API_TOKEN,
-            'X-API-Key': POAP_API_KEY,
-        }
-    };
 
+    var data = '';
     let secretString: string = '';
 
-    await axios
-        .request(secretFetchOptions)
-        .then(function (respose) {
-            secretString = respose.data.secret
-            console.log(secretString);
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
-
-
-    // Mint POAP
-    const poapMintOptions = {
-        method: 'POST',
-        url: 'https://api.poap.tech/actions/claim-qr',
+    var config = {
+        method: 'get',
+        url: 'https://api.poap.tech/actions/claim-qr?qr_hash=' + poapHash,
         headers: {
-            // accept: 'application/json',
-            // 'content-type': 'application/json',
-            'X-API-Key': 'b',
-            'authorization': 'Bearer ' + POAP_API_TOKEN
+            'X-API-Key': POAP_API_KEY,
+            'Authorization': 'Bearer ' + POAP_API_TOKEN
         },
-        data: {
-            sendEmail: true,
-            address: subWallet.address,
-            qr_hash: poapHash,
-            secret: secretString
-        }
+        data: data
     };
 
-    let poap;
-
-    await axios
-        .request(poapMintOptions)
+    axios(config)
         .then(function (response) {
-            poap = response.data;
-            console.log(response.data);
+            secretString = response.data.secret;
+            console.log("secretstrin", secretString);
+            var data = JSON.stringify({
+                "secret": secretString,
+                "qr_hash": poapHash,
+                "address": subWallet.address
+            });
+            console.log(data)
+            var config1 = {
+                method: 'post',
+                url: 'https://api.poap.tech/actions/claim-qr',
+                headers: {
+                    'X-API-Key': POAP_API_KEY,
+                    'Authorization': 'Bearer ' + POAP_API_TOKEN,
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios(config1)
+                .then(function (response) {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         })
         .catch(function (error) {
-            console.error(error);
+            console.log(error);
         });
+
+
 }
