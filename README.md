@@ -1,5 +1,5 @@
 # eth.b3rlin 2022 - *Private POAP*
-This repository holds the eth.berlin 2022 hackathon project of the TEAM *TUM Blockchain Club*. The project tackles POAP related privacy concerns and tries to improve way of collecting POAPs.
+This repository holds the eth.berlin 2022 hackathon project of the TEAM *TUM Blockchain Club*. The project tackles POAP related privacy concerns and tries to improve way of collecting POAPs. Check our [Pitchdeck](https://pitch.com/public/ad2b538a-dff7-4485-bae5-cf5bde1fb197) for further information.
 
 ## How To
 To use the prototypic *Private POAP* wallet you have to:
