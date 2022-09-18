@@ -7,7 +7,7 @@ To use the prototypic *Private POAP* wallet you have to:
 To have a working solution, you require API keys for the Dune and POAP APIs. Once received, supply your API keys to the *wallet.service.ts* file in the */poap-it/src/services/* directory.
 
 ### Setup
-1. Load required packages
+Load required packages
 ```bash
 npm install
 ```
@@ -35,7 +35,7 @@ The Private POAP PoC implements a four-step user-flow:
 1. Display POAP Collection based on used Ethereum wallet list
    - [Dune Query](https://dune.com/queries/1279140)
 
-### Collecting all your POAPs (DUNE)
+### Collecting all your POAPs (DUNE) <img src="dune_logo.webp" alt="drawing" height="70"/>
 In order to display all your POAPs you first need to collect them from your wallets. We do this by querying the token ids, which uniquely identify POAPs, from the DUNE database. We used the following query to get all POAP token ids that belong to a certain address: 
 ```sql
 select
